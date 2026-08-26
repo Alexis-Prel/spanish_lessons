@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spanish Verb Trainer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="left-panel">
+        <div id="sentence-box">Sentence will appear here</div>
+        <form id="verb-form">
+            <label>
+                <input type="radio" name="verb" value="ser" accesskey="1"> ser (Press 1)
+            </label>
+            <label>
+                <input type="radio" name="verb" value="estar" accesskey="2"> estar (Press 2)
+            </label>
+        </form>
+        <div id="status-bar">Ready</div>
+        <div class="controls">
+            <button id="download-btn">Download Answers (JSONL)</button>
+            <button id="load-btn">Load Answers</button>
+            <input type="file" id="file-input" accept=".jsonl,.json" style="display: none;">
+        </div>
+    </div>
+    <div class="right-panel">
+        <div id="chart-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const radios = document.querySelectorAll('input[name="verb"]');
+
+            // Handle 1 and 2 shortcuts globally
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '1') {
+                    radios[0].checked = true;
+                    e.preventDefault();
+                } else if (e.key === '2') {
+                    radios[1].checked = true;
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

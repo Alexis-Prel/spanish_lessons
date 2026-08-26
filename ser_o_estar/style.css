@@ -1,0 +1,118 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+}
+.left-panel {
+    width: 60%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.right-panel {
+    width: 40%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+#sentence-box {
+    width: 100%;
+    min-height: 200px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    text-align: center;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+#verb-form {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#verb-form label {
+    padding: 10px;
+    border: 1px solid #eee;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+}
+#verb-form label:hover {
+    background-color: #f5f5f5;
+}
+#verb-form input[type="radio"] {
+    margin-right: 10px;
+}
+#status-bar {
+    width: 100%;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+.controls {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+.controls button {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+}
+.controls button:hover {
+    background-color: #e8e8e8;
+}
+#chart-container {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+}
+
+.highlighted {
+    background-color: #ffff99;
+}
+
+.correct {
+    background-color: #d4f7d4;
+}
+
+.incorrect {
+    background-color: #f8d7da;
+}
+.chart-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+}
+.chart-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+.chart-label {
+    font-weight: 500;
+    color: #333;
+}
+.chart-value {
+    font-weight: bold;
+    color: #0066cc;
+    font-size: 16px;
+}
