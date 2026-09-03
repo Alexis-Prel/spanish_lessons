@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('file-input');
     const nextBtn = document.getElementById('next-btn');
 
+    // Initialize next button as hidden
+    nextBtn.style.display = 'none';
+
     let samples = [];
     let shuffledSamples = [];
     let currentIndex = 0;
