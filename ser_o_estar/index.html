@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spanish Verb Trainer</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,7 +16,15 @@
             <label>
                 <input type="radio" name="verb" value="estar" accesskey="2"> estar (Press 2)
             </label>
+            <button type="submit" id="submit-btn">Submit</button>
         </form>
+        <div class="controls">
+            <button id="next-btn" style="display: none;">Next question</button>
+            <label class="toggle-container">
+                <input type="checkbox" id="auto-advance-toggle"> 
+                <span>Auto-advance to next question</span>
+            </label>
+        </div>
         <div id="status-bar">Ready</div>
         <div class="controls">
             <button id="download-btn">Download Answers (JSONL)</button>
