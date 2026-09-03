@@ -10,21 +10,14 @@
     <div class="left-panel">
         <div id="sentence-box">Sentence will appear here</div>
         <form id="verb-form">
-            <label>
+            <label class="verb-option">
                 <input type="radio" name="verb" value="ser" accesskey="1"> ser (Press 1)
             </label>
-            <label>
+            <label class="verb-option">
                 <input type="radio" name="verb" value="estar" accesskey="2"> estar (Press 2)
             </label>
-            <button type="submit" id="submit-btn">Submit</button>
+            <button type="button" id="next-btn">Next question</button>
         </form>
-        <div class="controls">
-            <button id="next-btn" style="display: none;">Next question</button>
-            <label class="toggle-container">
-                <input type="checkbox" id="auto-advance-toggle"> 
-                <span>Auto-advance to next question</span>
-            </label>
-        </div>
         <div id="status-bar">Ready</div>
         <div class="controls">
             <button id="download-btn">Download Answers (JSONL)</button>
@@ -37,21 +30,6 @@
     </div>
 
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const radios = document.querySelectorAll('input[name="verb"]');
 
-            // Handle 1 and 2 shortcuts globally
-            document.addEventListener('keydown', function(e) {
-                if (e.key === '1') {
-                    radios[0].checked = true;
-                    e.preventDefault();
-                } else if (e.key === '2') {
-                    radios[1].checked = true;
-                    e.preventDefault();
-                }
-            });
-        });
-    </script>
 </body>
 </html>

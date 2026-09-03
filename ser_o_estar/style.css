@@ -66,18 +66,24 @@ body {
     width: 100%;
     max-width: 500px;
 }
-#verb-form label {
+#verb-form .verb-option {
     padding: 15px;
-    border: 1px solid #eee;
+    border: 2px solid #ddd;
     cursor: pointer;
     display: block;
     text-align: center;
     font-size: 18px;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
     touch-action: manipulation;
+    background-color: #f9f9f9;
+    border-radius: 6px;
 }
-#verb-form label:hover {
-    background-color: #f5f5f5;
+#verb-form .verb-option:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+#verb-form .verb-option:active {
+    background-color: #e8e8e8;
 }
 #verb-form input[type="radio"] {
     margin-right: 10px;
@@ -85,10 +91,10 @@ body {
     cursor: pointer;
 }
 
-#submit-btn {
+#next-btn {
     padding: 15px;
     font-size: 18px;
-    background-color: #4CAF50;
+    background-color: #2196F3;
     color: white;
     border: none;
     border-radius: 4px;
@@ -97,14 +103,15 @@ body {
     touch-action: manipulation;
     width: 100%;
     margin-top: 10px;
+    display: none;
 }
 
-#submit-btn:hover {
-    background-color: #45a049;
+#next-btn:hover {
+    background-color: #1976D2;
 }
 
-#submit-btn:active {
-    background-color: #3d8b40;
+#next-btn:active {
+    background-color: #1565C0;
 }
 
 @media (min-width: 768px) {
@@ -112,12 +119,12 @@ body {
         flex-direction: row;
     }
     
-    #verb-form label {
+    #verb-form .verb-option {
         flex: 1;
         font-size: 16px;
     }
     
-    #submit-btn {
+    #next-btn {
         width: auto;
         margin-top: 0;
         margin-left: 10px;

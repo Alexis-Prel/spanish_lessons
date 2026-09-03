@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadBtn = document.getElementById('load-btn');
     const fileInput = document.getElementById('file-input');
     const nextBtn = document.getElementById('next-btn');
-    const autoAdvanceToggle = document.getElementById('auto-advance-toggle');
 
     let samples = [];
     let shuffledSamples = [];
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let performanceChart = null;
     let isProcessing = false;
     let isWaitingForNext = false;
-    let answerWasCorrect = false;
 
     // Load samples from JSON file
     fetch('samples.json')
@@ -494,89 +492,45 @@ document.addEventListener('DOMContentLoaded', function() {
             // Disable radio buttons briefly to show feedback
             radios.forEach(radio => radio.disabled = true);
             
-            const autoAdvanceEnabled = autoAdvanceToggle.checked;
-            
-            if (autoAdvanceEnabled || forceAdvance) {
-                // Auto-advance or forced advance: move to next after a short delay
-                setTimeout(() => {
-                    sentenceBox.classList.remove('correct', 'incorrect');
-                    isProcessing = false;
-                    isWaitingForNext = false;
-                    
-                    // Check if there are more blanks in the current sentence
-                    if (currentBlankIndex + 1 < blanks.length) {
-                        // Move to next blank in the same sentence
-                        currentBlankIndex++;
-                        displayCurrentBlank();
-                    } else {
-                        // All blanks in this sentence are done, move to next sentence
-                        currentIndex++;
-                        showCurrentSentence();
-                    }
-                }, answerWasCorrect ? 1000 : 1500);
-            } else {
-                // Manual advancement: show next button and wait for user
-                setTimeout(() => {
-                    isProcessing = false;
-                    isWaitingForNext = true;
-                    nextBtn.style.display = 'block';
-                    nextBtn.focus();
-                }, 100);
-            }
+            // Always show next button and wait for user
+            setTimeout(() => {
+                isProcessing = false;
+                isWaitingForNext = true;
+                nextBtn.style.display = 'inline-block';
+                nextBtn.focus();
+            }, 100);
         } else {
             // No selection made, just move on
-            const autoAdvanceEnabled = autoAdvanceToggle.checked;
-            
-            if (autoAdvanceEnabled || forceAdvance) {
-                setTimeout(() => {
-                    sentenceBox.classList.remove('correct', 'incorrect');
-                    isProcessing = false;
-                    isWaitingForNext = false;
-                    
-                    // Check if there are more blanks in the current sentence
-                    if (currentBlankIndex + 1 < blanks.length) {
-                        // Move to next blank in the same sentence
-                        currentBlankIndex++;
-                        displayCurrentBlank();
-                    } else {
-                        // All blanks in this sentence are done, move to next sentence
-                        currentIndex++;
-                        showCurrentSentence();
-                    }
-                }, 100);
-            } else {
-                // Manual advancement: show next button and wait for user
-                setTimeout(() => {
-                    isProcessing = false;
-                    isWaitingForNext = true;
-                    nextBtn.style.display = 'block';
-                    nextBtn.focus();
-                }, 100);
-            }
+            setTimeout(() => {
+                isProcessing = false;
+                isWaitingForNext = true;
+                nextBtn.style.display = 'inline-block';
+                nextBtn.focus();
+            }, 100);
         }
     }
 
-    // Handle form submission
-    verbForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        moveToNextSentence();
-    });
-
-    // Handle radio button selection - submit when selected
+    // Handle radio button selection - auto-submit when selected
     radios.forEach(radio => {
         radio.addEventListener('change', function() {
             if (this.checked) {
-                // If auto-advance is enabled, submit immediately
-                // If not, still show the submit feedback but wait for next button
                 moveToNextSentence();
             }
         });
     });
 
-    // Also allow Enter key to submit when a radio is selected
+    // Handle 1 and 2 keys to select and auto-submit
     document.addEventListener('keydown', function(e) {
-        // If Enter key and a radio button is checked
-        if (e.key === 'Enter' && document.querySelector('input[name="verb"]:checked')) {
+        if (e.key === '1') {
+            radios[0].checked = true;
+            moveToNextSentence();
+            e.preventDefault();
+        } else if (e.key === '2') {
+            radios[1].checked = true;
+            moveToNextSentence();
+            e.preventDefault();
+        } else if (e.key === 'Enter' && document.querySelector('input[name="verb"]:checked')) {
+            // Also allow Enter key to submit when a radio is selected
             e.preventDefault();
             moveToNextSentence();
         }
@@ -605,14 +559,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('keydown', function(e) {
         if (isWaitingForNext && e.key === 'Enter') {
             e.preventDefault();
-            advanceToNextQuestion();
-        }
-    });
-    
-    // Auto-advance toggle change handler
-    autoAdvanceToggle.addEventListener('change', function() {
-        // If auto-advance is enabled and we're waiting, advance immediately
-        if (this.checked && isWaitingForNext) {
             advanceToNextQuestion();
         }
     });
