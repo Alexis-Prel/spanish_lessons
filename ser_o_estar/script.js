@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const downloadBtn = document.getElementById('download-btn');
     const loadBtn = document.getElementById('load-btn');
     const fileInput = document.getElementById('file-input');
+    const nextBtn = document.getElementById('next-btn');
+    const autoAdvanceToggle = document.getElementById('auto-advance-toggle');
 
     let samples = [];
     let shuffledSamples = [];
@@ -25,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let N_ser = 0, N_estar = 0;
     let performanceChart = null;
     let isProcessing = false;
+    let isWaitingForNext = false;
+    let answerWasCorrect = false;
 
     // Load samples from JSON file
     fetch('samples.json')
@@ -330,6 +334,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showCurrentSentence() {
+        // Hide next button when showing a new sentence
+        nextBtn.style.display = 'none';
+        isWaitingForNext = false;
+        
         if (currentIndex >= shuffledSamples.length) {
             // All sentences completed
             sentenceBox.textContent = 'All sentences completed! Score: ' + correctCount + '/' + totalCount;
@@ -417,7 +425,33 @@ document.addEventListener('DOMContentLoaded', function() {
         statusBar.textContent = `Sentence ${currentIndex + 1} of ${shuffledSamples.length}` + blankInfo;
     }
 
-    function moveToNextSentence() {
+    function advanceToNextQuestion() {
+        // Only process if we're waiting for manual advancement
+        if (!isWaitingForNext) return;
+        
+        // Hide the next button
+        nextBtn.style.display = 'none';
+        isWaitingForNext = false;
+        
+        // Clear feedback classes
+        sentenceBox.classList.remove('correct', 'incorrect');
+        
+        // Enable radio buttons for next question
+        radios.forEach(radio => radio.disabled = false);
+        
+        // Check if there are more blanks in the current sentence
+        if (currentBlankIndex + 1 < blanks.length) {
+            // Move to next blank in the same sentence
+            currentBlankIndex++;
+            displayCurrentBlank();
+        } else {
+            // All blanks in this sentence are done, move to next sentence
+            currentIndex++;
+            showCurrentSentence();
+        }
+    }
+
+    function moveToNextSentence(forceAdvance = false) {
         // Prevent overlapping submissions
         if (isProcessing) return;
         isProcessing = true;
@@ -450,47 +484,75 @@ document.addEventListener('DOMContentLoaded', function() {
                 correctCount++;
                 sentenceBox.classList.add('correct');
                 statusBar.textContent = 'Correct! ✓';
+                answerWasCorrect = true;
             } else {
                 sentenceBox.classList.add('incorrect');
                 statusBar.textContent = `Wrong! It was "${correctAnswer}"`;
+                answerWasCorrect = false;
             }
             
             // Disable radio buttons briefly to show feedback
             radios.forEach(radio => radio.disabled = true);
             
-            // Move to next after a short delay
-            setTimeout(() => {
-                sentenceBox.classList.remove('correct', 'incorrect');
-                isProcessing = false;
-                
-                // Check if there are more blanks in the current sentence
-                if (currentBlankIndex + 1 < blanks.length) {
-                    // Move to next blank in the same sentence
-                    currentBlankIndex++;
-                    displayCurrentBlank();
-                } else {
-                    // All blanks in this sentence are done, move to next sentence
-                    currentIndex++;
-                    showCurrentSentence();
-                }
-            }, 1000);
+            const autoAdvanceEnabled = autoAdvanceToggle.checked;
+            
+            if (autoAdvanceEnabled || forceAdvance) {
+                // Auto-advance or forced advance: move to next after a short delay
+                setTimeout(() => {
+                    sentenceBox.classList.remove('correct', 'incorrect');
+                    isProcessing = false;
+                    isWaitingForNext = false;
+                    
+                    // Check if there are more blanks in the current sentence
+                    if (currentBlankIndex + 1 < blanks.length) {
+                        // Move to next blank in the same sentence
+                        currentBlankIndex++;
+                        displayCurrentBlank();
+                    } else {
+                        // All blanks in this sentence are done, move to next sentence
+                        currentIndex++;
+                        showCurrentSentence();
+                    }
+                }, answerWasCorrect ? 1000 : 1500);
+            } else {
+                // Manual advancement: show next button and wait for user
+                setTimeout(() => {
+                    isProcessing = false;
+                    isWaitingForNext = true;
+                    nextBtn.style.display = 'block';
+                    nextBtn.focus();
+                }, 100);
+            }
         } else {
             // No selection made, just move on
-            setTimeout(() => {
-                sentenceBox.classList.remove('correct', 'incorrect');
-                isProcessing = false;
-                
-                // Check if there are more blanks in the current sentence
-                if (currentBlankIndex + 1 < blanks.length) {
-                    // Move to next blank in the same sentence
-                    currentBlankIndex++;
-                    displayCurrentBlank();
-                } else {
-                    // All blanks in this sentence are done, move to next sentence
-                    currentIndex++;
-                    showCurrentSentence();
-                }
-            }, 100);
+            const autoAdvanceEnabled = autoAdvanceToggle.checked;
+            
+            if (autoAdvanceEnabled || forceAdvance) {
+                setTimeout(() => {
+                    sentenceBox.classList.remove('correct', 'incorrect');
+                    isProcessing = false;
+                    isWaitingForNext = false;
+                    
+                    // Check if there are more blanks in the current sentence
+                    if (currentBlankIndex + 1 < blanks.length) {
+                        // Move to next blank in the same sentence
+                        currentBlankIndex++;
+                        displayCurrentBlank();
+                    } else {
+                        // All blanks in this sentence are done, move to next sentence
+                        currentIndex++;
+                        showCurrentSentence();
+                    }
+                }, 100);
+            } else {
+                // Manual advancement: show next button and wait for user
+                setTimeout(() => {
+                    isProcessing = false;
+                    isWaitingForNext = true;
+                    nextBtn.style.display = 'block';
+                    nextBtn.focus();
+                }, 100);
+            }
         }
     }
 
@@ -500,10 +562,12 @@ document.addEventListener('DOMContentLoaded', function() {
         moveToNextSentence();
     });
 
-    // Auto-submit when a radio button is selected (for mobile devices)
+    // Handle radio button selection - submit when selected
     radios.forEach(radio => {
         radio.addEventListener('change', function() {
             if (this.checked) {
+                // If auto-advance is enabled, submit immediately
+                // If not, still show the submit feedback but wait for next button
                 moveToNextSentence();
             }
         });
@@ -533,4 +597,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // File input change handler
     fileInput.addEventListener('change', handleFileUpload);
+
+    // Next button click handler
+    nextBtn.addEventListener('click', advanceToNextQuestion);
+    
+    // Also allow Enter key to trigger next when waiting
+    document.addEventListener('keydown', function(e) {
+        if (isWaitingForNext && e.key === 'Enter') {
+            e.preventDefault();
+            advanceToNextQuestion();
+        }
+    });
+    
+    // Auto-advance toggle change handler
+    autoAdvanceToggle.addEventListener('change', function() {
+        // If auto-advance is enabled and we're waiting, advance immediately
+        if (this.checked && isWaitingForNext) {
+            advanceToNextQuestion();
+        }
+    });
 });
