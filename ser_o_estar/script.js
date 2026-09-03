@@ -500,6 +500,15 @@ document.addEventListener('DOMContentLoaded', function() {
         moveToNextSentence();
     });
 
+    // Auto-submit when a radio button is selected (for mobile devices)
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                moveToNextSentence();
+            }
+        });
+    });
+
     // Also allow Enter key to submit when a radio is selected
     document.addEventListener('keydown', function(e) {
         // If Enter key and a radio button is checked
